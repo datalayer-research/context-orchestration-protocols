@@ -5,3 +5,14 @@
 # ⚗️ 📡 Context Orchestration Protocols
 
 Read more on https://datalayer.ai/research/context/orchestration-protocols.
+
+The documents are in [`docs/`](./docs/index.md), starting from its index:
+
+- [What A2A and ACP could not express](./docs/index.md#what-a2a-and-acp-could-not-express):
+  the protocol gap report, written from a conformance suite and a working
+  two-protocol delegation rather than from a reading of the two
+  specifications — [how the gaps were found](./docs/method.md),
+  [the gaps and their fields](./docs/gaps.md),
+  [the fields no scenario needs](./docs/out-of-scope.md),
+  [two things that are not gaps](./docs/not-gaps.md), and
+  [what a plain worker still gets](./docs/plain-workers.md).
