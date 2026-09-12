@@ -164,6 +164,44 @@ the reduced-guarantees claim itself, not an assertion about it: a worker
 that implements none of the extension still runs, completes, and answers,
 exactly as [the plain-worker chapter](./plain-workers.md) says it must.
 
+## A third trace: the browser adapter against a live reference worker
+
+The two gaps above were found reaching for a *standard* client. Reaching
+for `agent-runtimes`' *own* browser client
+(`runtimes/src/protocols/A2AAdapter.ts`) — spawning a real
+`agent_teams.a2a.reference_worker` process and driving it over a real
+socket, `fetch` unmocked on either side
+(`src/protocols/__tests__/a2aReferenceWorkerLive.test.ts`) — found two
+more, this time in the client, not `fasta2a`:
+
+- **The wrong well-known path.** `A2AAdapter.ts` fetched
+  `/.well-known/agent.json`; `fasta2a` (and `a2a-sdk`'s own
+  `A2ACardResolver` default) serves only `/.well-known/agent-card.json`.
+  The 404 was swallowed as "card is optional," so the extension silently
+  read as unsupported against a worker whose card plainly advertised it.
+- **Routing on a field `fasta2a` never sends.** `A2AAdapter.ts` was
+  written correctly, to the current spec — `Task.kind: 'task'`,
+  `TaskStatusUpdateEvent.kind: 'status-update'`, confirmed against
+  `a2a-sdk`'s own types — but `fasta2a.schema.SendMessageResult` and
+  `StreamResponse` wrap every result in a named key instead
+  (`{task}`, `{statusUpdate}`, `{message}`, `{artifactUpdate}`), with no
+  `kind` field anywhere in the schema. Every routing branch silently
+  matched nothing, for every event, from every `fasta2a`-based worker.
+  `fasta2a`'s `TaskStatusUpdateEvent` also carries no `final` field at
+  all, which the client's status-update handling gated on.
+
+Both fixed client-side (`normalizeA2AResult()` reshapes the wrapper into
+the `kind`-tagged form; `final` is inferred from a terminal state when
+absent) rather than waited on upstream — unlike the two gaps above, these
+were the browser client's own bugs, not `fasta2a`'s, and a worker that
+already sends `kind` passes through the normalizer unchanged. Together
+with the two `message/send` gaps, the picture is coherent rather than a
+grab-bag: `fasta2a`'s schema predates the current A2A specification's
+`kind`-discriminated-union convention across the board — the card's
+`url`, `message/send`'s result, every streaming event's shape, and the
+`final` flag are all missing or wrapped the same way, for the same
+underlying reason.
+
 ## Reading these yourself
 
 ```bash
@@ -176,3 +214,16 @@ pytest tests/test_standard_client_compatibility.py -v
 Four tests, one per section above (the two gaps split into their own,
 plus one for each direction's positive claim); `.github/workflows/py-tests.yml`
 runs them on every push.
+
+The third trace, in [`agent-runtimes`](https://github.com/datalayer/agent-runtimes):
+
+```bash
+git clone https://github.com/datalayer/agent-runtimes
+cd agent-runtimes
+npm install
+npx vitest run src/protocols/__tests__/a2aReferenceWorkerLive.test.ts
+```
+
+Spawns a real `agent_teams.a2a.reference_worker` process on a free port
+(needs `python3` with `agent-teams` installed; the test skips itself,
+not the suite, otherwise) and drives it with an unmocked `fetch`.
