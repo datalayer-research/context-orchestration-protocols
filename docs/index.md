@@ -71,15 +71,34 @@ directory publication is a separate deployment decision the schema mapping
 does not force. Not built — Phase 4 is demand-driven and there is none yet —
 but the answer is written down rather than left open.
 
+## Reference agents, and a public conformance suite
+
+[The worker, and the tests](./reference-agents.md): the smallest thing that
+speaks the extension correctly — no model, no framework beyond `fasta2a`, no
+Datalayer control plane — driven over real ASGI HTTP by hand-built JSON-RPC
+requests matching the normative wire shapes directly. Six scenarios,
+runnable by anyone against their own worker.
+
+## Interoperability
+
+[Traces](./interoperability.md) of a standard A2A client against the
+reference worker, and of Datalayer's own dispatch pattern against a worker
+that has never heard of this extension — against `a2a-sdk`, the A2A
+project's own reference implementation, pinned and independent of
+`fasta2a`. Looking for a trace found two real, previously undocumented
+gaps between what `fasta2a` actually serves and what the specification
+requires: a card missing its required `url`, and a `message/send` result
+wrapped where the spec wants it bare — the second one load-bearing enough
+that no specification-conformant client can complete a basic send against
+any `fasta2a`-based worker today, Datalayer's production ones included.
+Neither is this project's bug to fix; both are recorded as tests holding
+today's actual behaviour, so a `fasta2a` fix shows up as a newly-failing
+assertion rather than a silent gap.
+
 ## Chapters to come
 
 Written as the work they describe is built and measured:
 
-- **Reference agents** — a worker implementing the extension and one
-  implementing none of it, with a public conformance suite anybody can run
-  against their own.
-- **Interoperability** — traces of standard clients and of other
-  orchestration protocols against the same scenarios.
 - **What orchestration costs** — the overhead measures: acceptance latency,
   time to first worker event, context bytes referenced against copied, and
   the tokens orchestration itself adds.
