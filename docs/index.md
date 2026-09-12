@@ -4,6 +4,16 @@ How an agent hands work to other agents over the protocols they already
 speak — A2A and ACP — and what those protocols cannot say about that work
 today. The documents here are written from things that were built and run,
 not from a reading of the specifications, and they grow as the work does.
+Where building something contradicted what we had written, the earlier
+document is corrected and the correction is said out loud.
+
+## The strategy
+
+[Why this shape](./strategy.md) — four claims (orchestration is not a
+transport; use the protocols that exist; the platform is authoritative, not
+the session; reference context rather than copying it), what is deliberately
+out of scope, why the proposal is an extension rather than a protocol, and
+the order it is being built in.
 
 ## What A2A and ACP could not express
 
@@ -26,18 +36,41 @@ needs a scenario that shows it.
 5. [What a plain worker still gets](./plain-workers.md) — the reduction a
    worker that implements no extension field is reported, not hidden.
 
+## A durable control plane
+
+[What it took](./durable-control-plane.md) to make a delegation outlive the
+process that dispatched it: why dispatch moved into the durable worker, why
+an ending nobody saw is unknown rather than failed, why a retry needs its own
+run, and where the fifteen scenarios are actually proved. Several of these
+are corrections to what the strategy assumed.
+
+## Execution trees
+
+[What changes](./execution-trees.md) when a worker becomes an orchestrator:
+children requested rather than taken, an authority split between the identity
+service and the control plane that replaced a single stronger enforcement
+point, two budgets that look like one, why retry had to become a rerun, and
+why the team specification turned out to describe a tree already.
+
+## The extension, specified
+
+[The normative document](./extension-v1.md): the URI, how it is negotiated on
+A2A and on ACP, the one-key envelope, the fields each side sends, the one
+method, and — marked as such — the fields that are specified because a
+scenario needs them and are not yet on the wire. Optional throughout: a worker
+implementing none of it still runs.
+
 ## Chapters to come
 
 Written as the work they describe is built and measured:
 
-- **A durable control plane** — executions, attempts and leases that
-  outlive the process that dispatched them; what recovery looks like when a
-  worker dies after it accepted work.
-- **Execution trees** — children requested rather than taken, delegation
-  that narrows authority at every level, and events aggregated up the tree.
-- **The extension, specified** — the fields above as an A2A extension, with
-  reference agents and a public conformance suite.
+- **Reference agents** — a worker implementing the extension and one
+  implementing none of it, with a public conformance suite anybody can run
+  against their own.
 - **Interoperability** — traces of standard clients and of other
   orchestration protocols against the same scenarios.
+- **What orchestration costs** — the overhead measures: acceptance latency,
+  time to first worker event, context bytes referenced against copied, and
+  the tokens orchestration itself adds.
 
 Read more on <https://datalayer.ai/research/context/orchestration-protocols>.
