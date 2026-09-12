@@ -29,3 +29,6 @@ The documents are in [`docs/`](./docs/index.md), starting from its index:
 - [Execution trees](./docs/execution-trees.md): what changes when a worker
   becomes an orchestrator — authority, budgets, retry, and mixed-protocol
   children under one parent.
+- [OASF and AGNTCY, evaluated](./docs/oasf-and-agntcy.md): a field-by-field
+  mapping read from the schema itself, not built — the answer written down
+  rather than left open.

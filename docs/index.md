@@ -60,6 +60,17 @@ method, and — marked as such — the fields that are specified because a
 scenario needs them and are not yet on the wire. Optional throughout: a worker
 implementing none of it still runs.
 
+## OASF and AGNTCY, evaluated
+
+[The mapping](./oasf-and-agntcy.md), read from the schema rather than from
+its description: four of eleven `Record` fields match the descriptor
+exactly, `locators` is a download pointer and not where an endpoint goes,
+`modules` is the right extension point for both the endpoint and the
+capability vocabulary, seven descriptor fields have no OASF home yet, and
+directory publication is a separate deployment decision the schema mapping
+does not force. Not built — Phase 4 is demand-driven and there is none yet —
+but the answer is written down rather than left open.
+
 ## Chapters to come
 
 Written as the work they describe is built and measured:
